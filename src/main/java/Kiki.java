@@ -5,7 +5,7 @@ import java.util.Scanner;
  */
 public class Kiki {
     /**
-     * Greets the user, echoes commands, and exits when "bye" is entered.
+     * Greets the user, stores tasks, lists them, and exits when "bye" is entered.
      *
      * @param args Command line arguments.
      */
@@ -14,6 +14,8 @@ public class Kiki {
         String horizontalLine = "____________________________________________________________";
         String indent = "    ";
         Scanner sc = new Scanner(System.in);
+        String[] taskList = new String[100];
+        int taskCount = 0;
 
         System.out.println(indent + horizontalLine);
         System.out.println(indent + "Hello! I'm " + name);
@@ -28,12 +30,22 @@ public class Kiki {
                 System.out.println(indent + "Bye. Hope to see you again soon!");
                 System.out.println(indent + horizontalLine);
                 break;
+            } else if (input.equals("list")) {
+                System.out.println(indent + horizontalLine);
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println(indent + (i + 1) + ". " + taskList[i]);
+                }
+                System.out.println(indent + horizontalLine);
+            } else {
+                taskList[taskCount] = input;
+                taskCount++;
+                System.out.println(indent + horizontalLine);
+                System.out.println(indent + "added: " + input);
+                System.out.println(indent + horizontalLine);
             }
-
-            System.out.println(indent + horizontalLine);
-            System.out.println(indent + input);
-            System.out.println(indent + horizontalLine);
         }
-    }
 
+        sc.close();
+
+    }
 }
