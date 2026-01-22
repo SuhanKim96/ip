@@ -5,7 +5,7 @@ import java.util.Scanner;
  */
 public class Kiki {
     /**
-     * Greets the user, stores tasks, lists them, and exits when "bye" is entered.
+     * Greets the user, stores tasks, manages them, and exits when "bye" is entered.
      *
      * @param args Command line arguments.
      */
@@ -14,7 +14,7 @@ public class Kiki {
         String horizontalLine = "____________________________________________________________";
         String indent = "    ";
         Scanner sc = new Scanner(System.in);
-        String[] taskList = new String[100];
+        Task[] taskList = new Task[100];
         int taskCount = 0;
 
         System.out.println(indent + horizontalLine);
@@ -24,6 +24,7 @@ public class Kiki {
 
         while (true) {
             String input = sc.nextLine();
+            String[] inputLine = input.split(" ");
 
             if (input.equals("bye")) {
                 System.out.println(indent + horizontalLine);
@@ -32,12 +33,29 @@ public class Kiki {
                 break;
             } else if (input.equals("list")) {
                 System.out.println(indent + horizontalLine);
+                System.out.println(indent + "Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println(indent + (i + 1) + ". " + taskList[i]);
+                    System.out.println(indent + (i + 1) + "." + taskList[i]);
                 }
                 System.out.println(indent + horizontalLine);
+            } else if (inputLine[0].equals("mark")) {
+                int index = Integer.parseInt(inputLine[1]) - 1;
+                taskList[index].markAsDone();
+
+                System.out.println(indent + horizontalLine);
+                System.out.println(indent + "Nice! I've marked this task as done:");
+                System.out.println(indent + "  " + taskList[index]);
+                System.out.println(indent + horizontalLine);
+            } else if (inputLine[0].equals("unmark")) {
+                int index = Integer.parseInt(inputLine[1]) - 1;
+                taskList[index].markAsNotDone();
+
+                System.out.println(indent + horizontalLine);
+                System.out.println(indent + "OK, I've marked this task as not done yet:");
+                System.out.println(indent + "  " + taskList[index]);
+                System.out.println(indent + horizontalLine);
             } else {
-                taskList[taskCount] = input;
+                taskList[taskCount] = new Task(input);
                 taskCount++;
                 System.out.println(indent + horizontalLine);
                 System.out.println(indent + "added: " + input);
