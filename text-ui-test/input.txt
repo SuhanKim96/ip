@@ -1,0 +1,12 @@
+todo read book
+deadline return book /by June 6th
+event team meeting /from Aug 6th 2pm /to 4pm
+todo join sports club
+deadline submit assignment /by Friday
+list
+mark 1
+mark 4
+mark 2
+unmark 1
+list
+bye
