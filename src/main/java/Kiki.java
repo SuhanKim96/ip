@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -8,8 +9,7 @@ public class Kiki {
     private static final String HORIZONTAL_LINE = "____________________________________________________________";
     private static final String INDENT = "    ";
 
-    private static Task[] taskList = new Task[100];
-    private static int taskCount = 0;
+    private static ArrayList<Task> taskList = new ArrayList<>();
 
     /**
      * Greets the user, stores tasks, manages them, and exits when "bye" is entered.
@@ -42,6 +42,8 @@ public class Kiki {
                     markTask(arguments, true);
                 } else if (command.equals("unmark")) {
                     markTask(arguments, false);
+                } else if (command.equals("delete")) {
+                    deleteTask(arguments);
                 } else if (command.equals("todo") || command.equals("deadline") || command.equals("event")) {
                     addTask(command, arguments);
                 } else {
@@ -101,13 +103,12 @@ public class Kiki {
             }
             newTask = new Event(description, times[0], times[1]);
         }
-        taskList[taskCount] = newTask;
-        taskCount++;
+        taskList.add(newTask);
 
         System.out.println(INDENT + HORIZONTAL_LINE);
         System.out.println(INDENT + "Got it. I've added this task:");
         System.out.println(INDENT + "  " + newTask);
-        System.out.println(INDENT + "Now you have " + taskCount + " tasks in the list.");
+        System.out.println(INDENT + "Now you have " + taskList.size() + " tasks in the list.");
         System.out.println(INDENT + HORIZONTAL_LINE);
     }
 
@@ -117,8 +118,8 @@ public class Kiki {
     private static void listTask() {
         System.out.println(INDENT + HORIZONTAL_LINE);
         System.out.println(INDENT + "Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println(INDENT + (i + 1) + "." + taskList[i]);
+        for (int i = 0; i < taskList.size(); i++) {
+            System.out.println(INDENT + (i + 1) + "." + taskList.get(i));
         }
         System.out.println(INDENT + HORIZONTAL_LINE);
     }
@@ -137,23 +138,51 @@ public class Kiki {
 
         int index = Integer.parseInt(argument) - 1;
 
-        if (index < 0 || index >= taskCount) {
+        if (index < 0 || index >= taskList.size()) {
             throw new KikiException("I couldn't find that task! Please check the list again.");
         }
 
+        Task task = taskList.get(index);
+
         if (isDone) {
-            taskList[index].markAsDone();
+            task.markAsDone();
             System.out.println(INDENT + HORIZONTAL_LINE);
             System.out.println(INDENT + "Nice! I've marked this task as done:");
-            System.out.println(INDENT + "  " + taskList[index]);
+            System.out.println(INDENT + "  " + task);
             System.out.println(INDENT + HORIZONTAL_LINE);
         } else {
-            taskList[index].markAsNotDone();
+            task.markAsNotDone();
             System.out.println(INDENT + HORIZONTAL_LINE);
             System.out.println(INDENT + "OK, I've marked this task as not done yet:");
-            System.out.println(INDENT + "  " + taskList[index]);
+            System.out.println(INDENT + "  " + task);
             System.out.println(INDENT + HORIZONTAL_LINE);
         }
+    }
+
+    /**
+     * Deletes a specific task from the list.
+     *
+     * @param argument The string containing the index of the task to delete.
+     * @throws KikiException If the argument is empty or the task index is out of bounds.
+     */
+    private static void deleteTask(String argument) throws KikiException {
+        if (argument.isEmpty()) {
+            throw new KikiException("Which task? Please tell me the task number to delete.");
+        }
+
+        int index = Integer.parseInt(argument) - 1;
+
+        if (index < 0 || index >= taskList.size()) {
+            throw new KikiException("I couldn't find that task! Please check the list again.");
+        }
+
+        Task removedTask = taskList.remove(index);
+
+        System.out.println(INDENT + HORIZONTAL_LINE);
+        System.out.println(INDENT + "Noted. I've removed this task:");
+        System.out.println(INDENT + "  " + removedTask);
+        System.out.println(INDENT + "Now you have " + taskList.size() + " tasks in the list.");
+        System.out.println(INDENT + HORIZONTAL_LINE);
     }
 
 }
