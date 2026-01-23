@@ -27,27 +27,40 @@ public class Kiki {
         while (true) {
             String input = sc.nextLine();
             String[] inputLine = input.split(" ", 2);
-            String command = inputLine[0];
+            String commandString = inputLine[0];
             String arguments = inputLine.length > 1 ? inputLine[1] : "";
 
             try {
-                if (command.equals("bye")) {
-                    System.out.println(INDENT + HORIZONTAL_LINE);
-                    System.out.println(INDENT + "Bye. Hope to see you again soon!");
-                    System.out.println(INDENT + HORIZONTAL_LINE);
-                    break;
-                } else if (command.equals("list")) {
-                    listTask();
-                } else if (command.equals("mark")) {
-                    markTask(arguments, true);
-                } else if (command.equals("unmark")) {
-                    markTask(arguments, false);
-                } else if (command.equals("delete")) {
-                    deleteTask(arguments);
-                } else if (command.equals("todo") || command.equals("deadline") || command.equals("event")) {
-                    addTask(command, arguments);
-                } else {
-                    throw new KikiException("I'm sorry, I don't understand that command. Try \"todo\", \"event\", or \"list\".");
+                Command command;
+                try {
+                    command = Command.valueOf(commandString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new KikiException("I'm sorry, I don't understand that command.");
+                }
+                switch (command) {
+                    case BYE:
+                        System.out.println(INDENT + HORIZONTAL_LINE);
+                        System.out.println(INDENT + "Bye. Hope to see you again soon!");
+                        System.out.println(INDENT + HORIZONTAL_LINE);
+                        sc.close();
+                        return;
+                    case LIST:
+                        listTask();
+                        break;
+                    case MARK:
+                        markTask(arguments, true);
+                        break;
+                    case UNMARK:
+                        markTask(arguments, false);
+                        break;
+                    case DELETE:
+                        deleteTask(arguments);
+                        break;
+                    case TODO:
+                    case DEADLINE:
+                    case EVENT:
+                        addTask(command, arguments);
+                        break;
                 }
             } catch (KikiException e) {
                 System.out.println(INDENT + HORIZONTAL_LINE);
@@ -58,10 +71,7 @@ public class Kiki {
                 System.out.println(INDENT + "Error: That's not a valid number! Please enter a valid numeric task ID.");
                 System.out.println(INDENT + HORIZONTAL_LINE);
             }
-
         }
-
-        sc.close();
     }
 
     /**
@@ -71,15 +81,15 @@ public class Kiki {
      * @param arguments The details of the task.
      * @throws KikiException If arguments are invalid or missing.
      */
-    private static void addTask(String command, String arguments) throws KikiException {
+    private static void addTask(Command command, String arguments) throws KikiException {
         Task newTask = null;
 
-        if (command.equals("todo")) {
+        if (command == Command.TODO) {
             if (arguments.isEmpty()) {
                 throw new KikiException("You can't do nothing! Please tell me what task you want to add.");
             }
             newTask = new Todo(arguments);
-        } else if (command.equals("deadline")) {
+        } else if (command == Command.DEADLINE) {
             if (arguments.isEmpty()) {
                 throw new KikiException("A deadline needs a description!");
             }
@@ -88,7 +98,7 @@ public class Kiki {
                 throw new KikiException("When is this due? Please specify a time using \"/by\".");
             }
             newTask = new Deadline(parts[0], parts[1]);
-        } else if (command.equals("event")) {
+        } else if (command == Command.EVENT) {
             if (arguments.isEmpty()) {
                 throw new KikiException("An event needs a description! What is happening?");
             }
