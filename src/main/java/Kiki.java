@@ -8,7 +8,6 @@ public class Kiki {
     private static final String HORIZONTAL_LINE = "____________________________________________________________";
     private static final String INDENT = "    ";
 
-    // 2. STATE (The data we need to modify)
     private static Task[] taskList = new Task[100];
     private static int taskCount = 0;
 
@@ -28,38 +27,36 @@ public class Kiki {
         while (true) {
             String input = sc.nextLine();
             String[] inputLine = input.split(" ", 2);
+            String command = inputLine[0];
+            String arguments = inputLine.length > 1 ? inputLine[1] : "";
 
-            if (input.equals("bye")) {
-                System.out.println(INDENT + HORIZONTAL_LINE);
-                System.out.println(INDENT + "Bye. Hope to see you again soon!");
-                System.out.println(INDENT + HORIZONTAL_LINE);
-                break;
-            } else if (input.equals("list")) {
-                System.out.println(INDENT + HORIZONTAL_LINE);
-                System.out.println(INDENT + "Here are the tasks in your list:");
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println(INDENT + (i + 1) + "." + taskList[i]);
+            try {
+                if (command.equals("bye")) {
+                    System.out.println(INDENT + HORIZONTAL_LINE);
+                    System.out.println(INDENT + "Bye. Hope to see you again soon!");
+                    System.out.println(INDENT + HORIZONTAL_LINE);
+                    break;
+                } else if (command.equals("list")) {
+                    listTask();
+                } else if (command.equals("mark")) {
+                    markTask(arguments, true);
+                } else if (command.equals("unmark")) {
+                    markTask(arguments, false);
+                } else if (command.equals("todo") || command.equals("deadline") || command.equals("event")) {
+                    addTask(command, arguments);
+                } else {
+                    throw new KikiException("I'm sorry, I don't understand that command. Try \"todo\", \"event\", or \"list\".");
                 }
+            } catch (KikiException e) {
                 System.out.println(INDENT + HORIZONTAL_LINE);
-            } else if (inputLine[0].equals("mark")) {
-                int index = Integer.parseInt(inputLine[1]) - 1;
-                taskList[index].markAsDone();
-
+                System.out.println(INDENT + "Oh no! " + e.getMessage());
                 System.out.println(INDENT + HORIZONTAL_LINE);
-                System.out.println(INDENT + "Nice! I've marked this task as done:");
-                System.out.println(INDENT + "  " + taskList[index]);
+            } catch (NumberFormatException e) {
                 System.out.println(INDENT + HORIZONTAL_LINE);
-            } else if (inputLine[0].equals("unmark")) {
-                int index = Integer.parseInt(inputLine[1]) - 1;
-                taskList[index].markAsNotDone();
-
+                System.out.println(INDENT + "Error: That's not a valid number! Please enter a valid numeric task ID.");
                 System.out.println(INDENT + HORIZONTAL_LINE);
-                System.out.println(INDENT + "OK, I've marked this task as not done yet:");
-                System.out.println(INDENT + "  " + taskList[index]);
-                System.out.println(INDENT + HORIZONTAL_LINE);
-            } else {
-                addTask(inputLine[0], inputLine[1]);
             }
+
         }
 
         sc.close();
@@ -70,20 +67,38 @@ public class Kiki {
      *
      * @param command   The type of task to add.
      * @param arguments The details of the task.
+     * @throws KikiException If arguments are invalid or missing.
      */
-    private static void addTask(String command, String arguments) {
+    private static void addTask(String command, String arguments) throws KikiException {
         Task newTask = null;
 
         if (command.equals("todo")) {
+            if (arguments.isEmpty()) {
+                throw new KikiException("You can't do nothing! Please tell me what task you want to add.");
+            }
             newTask = new Todo(arguments);
         } else if (command.equals("deadline")) {
+            if (arguments.isEmpty()) {
+                throw new KikiException("A deadline needs a description!");
+            }
             String[] parts = arguments.split(" /by ");
+            if (parts.length < 2) {
+                throw new KikiException("When is this due? Please specify a time using \"/by\".");
+            }
             newTask = new Deadline(parts[0], parts[1]);
         } else if (command.equals("event")) {
-            // arguments: "project meeting /from Mon 2pm /to 4pm"
+            if (arguments.isEmpty()) {
+                throw new KikiException("An event needs a description! What is happening?");
+            }
             String[] parts = arguments.split(" /from ");
+            if (parts.length < 2) {
+                throw new KikiException("When does it start? Please specify a start time using \"/from\".");
+            }
             String description = parts[0];
             String[] times = parts[1].split(" /to ");
+            if (times.length < 2) {
+                throw new KikiException("When does it end? Please specify an end time using \"/to\".");
+            }
             newTask = new Event(description, times[0], times[1]);
         }
         taskList[taskCount] = newTask;
@@ -95,4 +110,50 @@ public class Kiki {
         System.out.println(INDENT + "Now you have " + taskCount + " tasks in the list.");
         System.out.println(INDENT + HORIZONTAL_LINE);
     }
+
+    /**
+     * Prints all the tasks currently stored in the taskList.
+     */
+    private static void listTask() {
+        System.out.println(INDENT + HORIZONTAL_LINE);
+        System.out.println(INDENT + "Here are the tasks in your list:");
+        for (int i = 0; i < taskCount; i++) {
+            System.out.println(INDENT + (i + 1) + "." + taskList[i]);
+        }
+        System.out.println(INDENT + HORIZONTAL_LINE);
+    }
+
+    /**
+     * Marks a specific task as done or not done based on the user's input.
+     *
+     * @param argument The string containing the index of the task.
+     * @param isDone   True to mark the task as done, false to mark it as not done.
+     * @throws KikiException If the argument is empty or the task index is out of bounds.
+     */
+    private static void markTask(String argument, boolean isDone) throws KikiException {
+        if (argument.isEmpty()) {
+            throw new KikiException("Which task? Please tell me the task number to " + (isDone ? "mark." : "unmark."));
+        }
+
+        int index = Integer.parseInt(argument) - 1;
+
+        if (index < 0 || index >= taskCount) {
+            throw new KikiException("I couldn't find that task! Please check the list again.");
+        }
+
+        if (isDone) {
+            taskList[index].markAsDone();
+            System.out.println(INDENT + HORIZONTAL_LINE);
+            System.out.println(INDENT + "Nice! I've marked this task as done:");
+            System.out.println(INDENT + "  " + taskList[index]);
+            System.out.println(INDENT + HORIZONTAL_LINE);
+        } else {
+            taskList[index].markAsNotDone();
+            System.out.println(INDENT + HORIZONTAL_LINE);
+            System.out.println(INDENT + "OK, I've marked this task as not done yet:");
+            System.out.println(INDENT + "  " + taskList[index]);
+            System.out.println(INDENT + HORIZONTAL_LINE);
+        }
+    }
+
 }
