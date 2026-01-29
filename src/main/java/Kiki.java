@@ -19,6 +19,19 @@ public class Kiki {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
+        try {
+            taskList = Save.load();
+            if (taskList.isEmpty()) {
+                System.out.println(INDENT + "No saved file found. Starting with a new list.");
+            } else {
+                System.out.println(INDENT + "Saved file found. Successfully loaded " + taskList.size() + " tasks from file.");
+            }
+        } catch (KikiException e) {
+            System.out.println(INDENT + e.getMessage());
+            System.out.println(INDENT + "Starting with a new empty list.");
+            taskList = new ArrayList<>();
+        }
+
         System.out.println(INDENT + HORIZONTAL_LINE);
         System.out.println(INDENT + "Hello! I'm " + NAME);
         System.out.println(INDENT + "What can I do for you?");
@@ -114,6 +127,7 @@ public class Kiki {
             newTask = new Event(description, times[0], times[1]);
         }
         taskList.add(newTask);
+        Save.save(taskList);
 
         System.out.println(INDENT + HORIZONTAL_LINE);
         System.out.println(INDENT + "Got it. I've added this task:");
@@ -167,6 +181,8 @@ public class Kiki {
             System.out.println(INDENT + "  " + task);
             System.out.println(INDENT + HORIZONTAL_LINE);
         }
+
+        Save.save(taskList);
     }
 
     /**
@@ -187,6 +203,7 @@ public class Kiki {
         }
 
         Task removedTask = taskList.remove(index);
+        Save.save(taskList);
 
         System.out.println(INDENT + HORIZONTAL_LINE);
         System.out.println(INDENT + "Noted. I've removed this task:");
