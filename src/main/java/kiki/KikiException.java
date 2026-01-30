@@ -1,3 +1,5 @@
+package kiki;
+
 /**
  * KikiException class for exceptions specific to the Kiki chatbot.
  */

@@ -1,3 +1,5 @@
+package kiki;
+
 import java.util.Scanner;
 
 /**
