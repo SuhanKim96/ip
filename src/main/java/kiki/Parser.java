@@ -15,7 +15,6 @@ public class Parser {
     public static Command parseCommand(String fullCommand) throws KikiException {
         String[] inputLine = fullCommand.split(" ", 2);
         String commandString = inputLine[0];
-
         try {
             return Command.valueOf(commandString.toUpperCase());
         } catch (IllegalArgumentException e) {

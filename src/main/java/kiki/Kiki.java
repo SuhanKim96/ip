@@ -201,6 +201,11 @@ public class Kiki {
         ui.showLine();
     }
 
+    /**
+     * The main entry point of the Kiki application.
+     *
+     * @param args Command line arguments
+     */
     public static void main(String[] args) {
         new Kiki().run();
     }
