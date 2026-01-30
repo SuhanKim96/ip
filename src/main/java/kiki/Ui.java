@@ -1,5 +1,6 @@
 package kiki;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -71,6 +72,20 @@ public class Ui {
     public void showMessage(String message) {
         showLine();
         System.out.println(INDENT + message);
+        showLine();
+    }
+
+    /**
+     * Displays the list of tasks found by a keyword search.
+     *
+     * @param tasks The list of tasks that match the keyword.
+     */
+    public void showFoundTasks(ArrayList<Task> tasks) {
+        showLine();
+        System.out.println(INDENT + "Here are the matching tasks in your list:");
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(INDENT + (i + 1) + "." + tasks.get(i));
+        }
         showLine();
     }
 

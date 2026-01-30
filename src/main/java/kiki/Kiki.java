@@ -1,5 +1,7 @@
 package kiki;
 
+import java.util.ArrayList;
+
 /**
  * The main class of the Kiki application.
  */
@@ -62,6 +64,9 @@ public class Kiki {
                         break;
                     case DELETE:
                         deleteTask(arguments);
+                        break;
+                    case FIND:
+                        handleFind(arguments);
                         break;
                     case TODO:
                     case DEADLINE:
@@ -199,6 +204,16 @@ public class Kiki {
         System.out.println(INDENT + "  " + removedTask);
         System.out.println(INDENT + "Now you have " + tasks.size() + " tasks in the list.");
         ui.showLine();
+    }
+
+    /**
+     * Handles the find command by searching for tasks that contain the keyword and displaying them.
+     *
+     * @param keyword The keyword to search for in task descriptions.
+     */
+    private void handleFind(String keyword) {
+        ArrayList<Task> foundTasks = tasks.findTasks(keyword);
+        ui.showFoundTasks(foundTasks);
     }
 
     public static void main(String[] args) {

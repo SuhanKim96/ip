@@ -40,8 +40,22 @@ public class Task {
         this.isDone = false;
     }
 
+    /**
+     * Returns a string representation of the task formatted for file storage.
+     *
+     * @return A formatted string.
+     */
     public String toFileString() {
         return String.format("| %d | %s", isDone ? 1 : 0, description);
+    }
+
+    /**
+     * Returns the description of the task.
+     *
+     * @return The description string of the task.
+     */
+    public String getDescription() {
+        return this.description;
     }
 
     @Override
