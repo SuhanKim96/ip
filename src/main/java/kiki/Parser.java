@@ -1,3 +1,5 @@
+package kiki;
+
 /**
  * Parser class for parsing user input into commands and arguments.
  */

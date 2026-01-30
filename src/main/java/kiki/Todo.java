@@ -1,3 +1,5 @@
+package kiki;
+
 /**
  * Todo class representing a task without any date/time attached to it.
  */

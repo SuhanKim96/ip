@@ -1,3 +1,5 @@
+package kiki;
+
 /**
  * Represents the valid commands that Kiki can understand.
  */
