@@ -5,18 +5,17 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Save class that handles the loading and saving of task data.
+ * Storage class that handles the loading and saving of task data.
  */
-public class Save {
+public class Storage {
     private static final String FILE_PATH = "./data/kiki.txt";
-    private static final String INDENT = "    ";
 
     /**
      * Saves the current list of tasks to the hard disk.
      *
      * @param tasks The ArrayList of tasks to save.
      */
-    public static void save(ArrayList<Task> tasks) {
+    public void save(ArrayList<Task> tasks) {
         try {
             File f = new File(FILE_PATH);
             f.getParentFile().mkdirs();
@@ -27,7 +26,7 @@ public class Save {
             }
             fw.close();
         } catch (IOException e) {
-            System.out.println(INDENT + "Error saving tasks: " + e.getMessage());
+            System.out.println("Error saving tasks: " + e.getMessage());
         }
     }
 
@@ -37,7 +36,7 @@ public class Save {
      * @return An ArrayList of tasks loaded from the file.
      * @throws KikiException If the file format is corrupted.
      */
-    public static ArrayList<Task> load() throws KikiException {
+    public ArrayList<Task> load() throws KikiException {
         ArrayList<Task> loadedTasks = new ArrayList<>();
         File f = new File(FILE_PATH);
 
