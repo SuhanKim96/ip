@@ -3,96 +3,89 @@ package kiki;
 import java.util.ArrayList;
 
 /**
- * The main class of the Kiki application.
+ * The main logic controller for the Kiki application.
+ * This class handles the interaction between the storage, task list, and the GUI.
  */
 public class Kiki {
-    private static final String INDENT = "    ";
-    private static final String HORIZONTAL_LINE = "____________________________________________________________";
     private Storage storage;
     private TaskList tasks;
-    private Ui ui;
-
 
     /**
      * Initializes the application components.
-     * It attempts to load existing tasks from save file.
+     * Attempts to load existing tasks from the save file upon instantiation.
      */
     public Kiki() {
-        ui = new Ui();
         storage = new Storage();
         try {
             tasks = new TaskList(storage.load());
-            if (tasks.size() == 0) {
-                ui.showLine();
-                System.out.println(INDENT + "No saved file found. Starting with a new list.");
-                ui.showLine();
-            } else {
-                ui.showLine();
-                System.out.println(INDENT + "Saved file found. Successfully loaded "
-                                    + tasks.size() + " tasks from file.");
-                ui.showLine();
-            }
         } catch (KikiException e) {
-            ui.showLoadingError();
             tasks = new TaskList();
         }
     }
 
     /**
-     * Runs the main program loop.
-     * Runs the program until the "bye" command is entered.
+     * Processes the user input and generates a response.
+     * This method is called by the GUI to handle a single user command.
+     *
+     * @param input The raw command string entered by the user.
+     * @return A string response to be displayed in the GUI chat bubble.
      */
-    public void run() {
-        ui.showWelcome();
-        boolean isExit = false;
-        while (!isExit) {
-            try {
-                String fullCommand = ui.readCommand();
-                Command command = Parser.parseCommand(fullCommand);
-                String arguments = Parser.parseArguments(fullCommand);
-                switch (command) {
-                case BYE:
-                    ui.showMessage("Bye. Hope to see you again soon!");
-                    isExit = true;
-                    break;
-                case LIST:
-                    listTask();
-                    break;
-                case MARK:
-                    markTask(arguments, true);
-                    break;
-                case UNMARK:
-                    markTask(arguments, false);
-                    break;
-                case DELETE:
-                    deleteTask(arguments);
-                    break;
-                case FIND:
-                    handleFind(arguments);
-                    break;
-                case TODO:
-                case DEADLINE:
-                case EVENT:
-                    addTask(command, arguments);
-                    break;
-                default:
-                    throw new KikiException("I'm sorry, but I don't know what that means.");
-                }
-            } catch (KikiException | NumberFormatException e) {
-                ui.showError(e.getMessage());
+    public String getResponse(String input) {
+        try {
+            Command command = Parser.parseCommand(input);
+            String arguments = Parser.parseArguments(input);
+            switch (command) {
+            case BYE:
+                return "Bye. Hope to see you again soon!";
+            case LIST:
+                return listTask();
+            case MARK:
+                return markTask(arguments, true);
+            case UNMARK:
+                return markTask(arguments, false);
+            case DELETE:
+                return deleteTask(arguments);
+            case FIND:
+                return handleFind(arguments);
+            case TODO:
+            case DEADLINE:
+            case EVENT:
+                return addTask(command, arguments);
+            default:
+                throw new KikiException("I'm sorry, but I don't know what that means.");
             }
+        } catch (KikiException | NumberFormatException e) {
+            return "OOPS!!! " + e.getMessage();
+        } catch (Exception e) {
+            return "Something went wrong: " + e.getMessage();
         }
-        ui.close();
     }
 
     /**
-     * Adds a new task to the task list based on the command type.
+     * Generates the welcome message including the file loading status.
      *
-     * @param command   The type of task to add.
-     * @param arguments The details of the task.
+     * @return A string containing the greeting and the status of the data file.
+     */
+    public String getWelcomeMessage() {
+        String status;
+        if (tasks.size() == 0) {
+            status = "No saved file found. Starting with a new list.";
+        } else {
+            status = "Saved file found. Successfully loaded " + tasks.size() + " tasks from file.";
+        }
+
+        return "Hello! I'm Kiki!\n" + status + "\nWhat can I do for you?";
+    }
+
+    /**
+     * Adds a new task to the task list and saves the changes.
+     *
+     * @param command   The type of task to add (TODO, DEADLINE, EVENT).
+     * @param arguments The details of the task (description and time).
+     * @return A string confirming the task addition and showing the current task count.
      * @throws KikiException If arguments are invalid or missing.
      */
-    private void addTask(Command command, String arguments) throws KikiException {
+    private String addTask(Command command, String arguments) throws KikiException {
         Task newTask = null;
 
         if (command == Command.TODO) {
@@ -124,36 +117,41 @@ public class Kiki {
             }
             newTask = new Event(description, times[0], times[1]);
         }
+
         tasks.addTask(newTask);
         storage.save(tasks.getAllTasks());
 
-        ui.showLine();
-        System.out.println(INDENT + "Got it. I've added this task:");
-        System.out.println(INDENT + "  " + newTask);
-        System.out.println(INDENT + "Now you have " + tasks.size() + " tasks in the list.");
-        ui.showLine();
+        return "Got it. I've added this task:\n"
+                + "  " + newTask + "\n"
+                + "Now you have " + tasks.size() + " tasks in the list.";
     }
 
     /**
-     * Prints all the tasks currently stored in the taskList.
+     * Generates a string representation of all tasks currently in the list.
+     *
+     * @return A formatted string listing all tasks, or a message if the list is empty.
      */
-    private void listTask() {
-        ui.showLine();
-        System.out.println(INDENT + "Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(INDENT + (i + 1) + "." + tasks.get(i));
+    private String listTask() {
+        if (tasks.size() == 0) {
+            return "Your list is empty!";
         }
-        ui.showLine();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Here are the tasks in your list:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            sb.append((i + 1)).append(".").append(tasks.get(i)).append("\n");
+        }
+        return sb.toString();
     }
 
     /**
-     * Marks a specific task as done or not done based on the user's input.
+     * Marks a specific task as done or not done and saves the changes.
      *
      * @param argument The string containing the index of the task.
      * @param isDone   True to mark the task as done, false to mark it as not done.
+     * @return A string confirming the task's new status.
      * @throws KikiException If the argument is empty or the task index is out of bounds.
      */
-    private void markTask(String argument, boolean isDone) throws KikiException {
+    private String markTask(String argument, boolean isDone) throws KikiException {
         if (argument.isEmpty()) {
             throw new KikiException("Which task? Please tell me the task number.");
         }
@@ -168,28 +166,23 @@ public class Kiki {
 
         if (isDone) {
             task.markAsDone();
-            ui.showLine();
-            System.out.println(INDENT + "Nice! I've marked this task as done:");
-            System.out.println(INDENT + "  " + task);
-            ui.showLine();
+            storage.save(tasks.getAllTasks());
+            return "Nice! I've marked this task as done:\n  " + task;
         } else {
             task.markAsNotDone();
-            ui.showLine();
-            System.out.println(INDENT + "OK, I've marked this task as not done yet:");
-            System.out.println(INDENT + "  " + task);
-            ui.showLine();
+            storage.save(tasks.getAllTasks());
+            return "OK, I've marked this task as not done yet:\n  " + task;
         }
-
-        storage.save(tasks.getAllTasks());
     }
 
     /**
-     * Deletes a specific task from the list.
+     * Deletes a specific task from the list and saves the changes.
      *
      * @param argument The string containing the index of the task to delete.
+     * @return A string confirming the deletion and showing the remaining task count.
      * @throws KikiException If the argument is empty or the task index is out of bounds.
      */
-    private void deleteTask(String argument) throws KikiException {
+    private String deleteTask(String argument) throws KikiException {
         if (argument.isEmpty()) {
             throw new KikiException("Which task? Please tell me the task number to delete.");
         }
@@ -203,24 +196,29 @@ public class Kiki {
         Task removedTask = tasks.delete(index);
         storage.save(tasks.getAllTasks());
 
-        ui.showLine();
-        System.out.println(INDENT + "Noted. I've removed this task:");
-        System.out.println(INDENT + "  " + removedTask);
-        System.out.println(INDENT + "Now you have " + tasks.size() + " tasks in the list.");
-        ui.showLine();
+        return "Noted. I've removed this task:\n"
+                + "  " + removedTask + "\n"
+                + "Now you have " + tasks.size() + " tasks in the list.";
     }
 
     /**
-     * Handles the find command by searching for tasks that contain the keyword and displaying them.
+     * Searches for tasks that contain the specified keyword.
      *
      * @param keyword The keyword to search for in task descriptions.
+     * @return A string listing the matching tasks, or a message indicating no matches were found.
      */
-    private void handleFind(String keyword) {
+    private String handleFind(String keyword) {
         ArrayList<Task> foundTasks = tasks.findTasks(keyword);
-        ui.showFoundTasks(foundTasks);
-    }
 
-    public static void main(String[] args) {
-        new Kiki().run();
+        if (foundTasks.isEmpty()) {
+            return "No matching tasks found.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Here are the matching tasks in your list:\n");
+        for (int i = 0; i < foundTasks.size(); i++) {
+            sb.append((i + 1)).append(".").append(foundTasks.get(i)).append("\n");
+        }
+        return sb.toString();
     }
 }
