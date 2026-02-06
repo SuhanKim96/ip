@@ -58,17 +58,17 @@ public class Storage {
 
                 Task task = null;
                 switch (type) {
-                    case "T":
-                        task = new Todo(description);
-                        break;
-                    case "D":
-                        task = new Deadline(description, parts[3]);
-                        break;
-                    case "E":
-                        task = new Event(description, parts[3], parts[4]);
-                        break;
-                    default:
-                        throw new KikiException("Unknown task type in file.");
+                case "T":
+                    task = new Todo(description);
+                    break;
+                case "D":
+                    task = new Deadline(description, parts[3]);
+                    break;
+                case "E":
+                    task = new Event(description, parts[3], parts[4]);
+                    break;
+                default:
+                    throw new KikiException("Unknown task type in file.");
                 }
 
                 if (isDone) {

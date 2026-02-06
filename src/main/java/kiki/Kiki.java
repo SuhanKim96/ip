@@ -6,11 +6,12 @@ import java.util.ArrayList;
  * The main class of the Kiki application.
  */
 public class Kiki {
+    private static final String INDENT = "    ";
+    private static final String HORIZONTAL_LINE = "____________________________________________________________";
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
-    private static final String INDENT = "    ";
-    private static final String HORIZONTAL_LINE = "____________________________________________________________";
+
 
     /**
      * Initializes the application components.
@@ -27,7 +28,8 @@ public class Kiki {
                 ui.showLine();
             } else {
                 ui.showLine();
-                System.out.println(INDENT + "Saved file found. Successfully loaded " + tasks.size() + " tasks from file.");
+                System.out.println(INDENT + "Saved file found. Successfully loaded "
+                                    + tasks.size() + " tasks from file.");
                 ui.showLine();
             }
         } catch (KikiException e) {
@@ -49,30 +51,32 @@ public class Kiki {
                 Command command = Parser.parseCommand(fullCommand);
                 String arguments = Parser.parseArguments(fullCommand);
                 switch (command) {
-                    case BYE:
-                        ui.showMessage("Bye. Hope to see you again soon!");
-                        isExit = true;
-                        break;
-                    case LIST:
-                        listTask();
-                        break;
-                    case MARK:
-                        markTask(arguments, true);
-                        break;
-                    case UNMARK:
-                        markTask(arguments, false);
-                        break;
-                    case DELETE:
-                        deleteTask(arguments);
-                        break;
-                    case FIND:
-                        handleFind(arguments);
-                        break;
-                    case TODO:
-                    case DEADLINE:
-                    case EVENT:
-                        addTask(command, arguments);
-                        break;
+                case BYE:
+                    ui.showMessage("Bye. Hope to see you again soon!");
+                    isExit = true;
+                    break;
+                case LIST:
+                    listTask();
+                    break;
+                case MARK:
+                    markTask(arguments, true);
+                    break;
+                case UNMARK:
+                    markTask(arguments, false);
+                    break;
+                case DELETE:
+                    deleteTask(arguments);
+                    break;
+                case FIND:
+                    handleFind(arguments);
+                    break;
+                case TODO:
+                case DEADLINE:
+                case EVENT:
+                    addTask(command, arguments);
+                    break;
+                default:
+                    throw new KikiException("I'm sorry, but I don't know what that means.");
                 }
             } catch (KikiException | NumberFormatException e) {
                 ui.showError(e.getMessage());
