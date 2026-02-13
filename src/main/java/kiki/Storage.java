@@ -18,6 +18,7 @@ public class Storage {
      * @param tasks The ArrayList of tasks to save.
      */
     public void save(ArrayList<Task> tasks) {
+        assert tasks != null : "Task list to save cannot be null";
         try {
             File f = new File(FILE_PATH);
             f.getParentFile().mkdirs();
