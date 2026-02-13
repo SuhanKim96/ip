@@ -48,9 +48,11 @@ public class Kiki {
             case FIND:
                 return handleFind(arguments);
             case TODO:
+                return addTodo(arguments);
             case DEADLINE:
+                return addDeadline(arguments);
             case EVENT:
-                return addTask(command, arguments);
+                return addEvent(arguments);
             default:
                 throw new KikiException("I'm sorry, but I don't know what that means.");
             }
@@ -78,49 +80,74 @@ public class Kiki {
     }
 
     /**
-     * Adds a new task to the task list and saves the changes.
+     * Adds a new Todo task to the task list.
      *
-     * @param command   The type of task to add (TODO, DEADLINE, EVENT).
-     * @param arguments The details of the task (description and time).
-     * @return A string confirming the task addition and showing the current task count.
-     * @throws KikiException If arguments are invalid or missing.
+     * @param arguments The description of the todo task.
+     * @return A formatted string confirming the task has been added.
+     * @throws KikiException If the arguments is empty.
      */
-    private String addTask(Command command, String arguments) throws KikiException {
-        Task newTask = null;
-
-        if (command == Command.TODO) {
-            if (arguments.isEmpty()) {
-                throw new KikiException("You can't do nothing! Please tell me what task you want to add.");
-            }
-            newTask = new Todo(arguments);
-        } else if (command == Command.DEADLINE) {
-            if (arguments.isEmpty()) {
-                throw new KikiException("A deadline needs a description!");
-            }
-            String[] parts = arguments.split(" /by ");
-            if (parts.length < 2) {
-                throw new KikiException("When is this due? Please specify a time using \"/by\".");
-            }
-            newTask = new Deadline(parts[0], parts[1]);
-        } else if (command == Command.EVENT) {
-            if (arguments.isEmpty()) {
-                throw new KikiException("An event needs a description! What is happening?");
-            }
-            String[] parts = arguments.split(" /from ");
-            if (parts.length < 2) {
-                throw new KikiException("When does it start? Please specify a start time using \"/from\".");
-            }
-            String description = parts[0];
-            String[] times = parts[1].split(" /to ");
-            if (times.length < 2) {
-                throw new KikiException("When does it end? Please specify an end time using \"/to\".");
-            }
-            newTask = new Event(description, times[0], times[1]);
+    private String addTodo(String arguments) throws KikiException {
+        if (arguments.isEmpty()) {
+            throw new KikiException("You can't do nothing! Please tell me what task you want to add.");
         }
+        Task newTask = new Todo(arguments);
+        return addTaskToStorage(newTask);
+    }
 
+    /**
+     * Adds a new Deadline task to the task list.
+     * Parses the arguments to extract the description and the deadline time.
+     *
+     * @param arguments The raw string containing the description and the "/by" time.
+     * @return A formatted string confirming the task has been added.
+     * @throws KikiException If the description is empty or the "/by" time is missing.
+     */
+    private String addDeadline(String arguments) throws KikiException {
+        if (arguments.isEmpty()) {
+            throw new KikiException("A deadline needs a description!");
+        }
+        String[] parts = arguments.split(" /by ");
+        if (parts.length < 2) {
+            throw new KikiException("When is this due? Please specify a time using \"/by\".");
+        }
+        Task newTask = new Deadline(parts[0], parts[1]);
+        return addTaskToStorage(newTask);
+    }
+
+    /**
+     * Adds a new Event task to the task list.
+     * Parses the arguments to extract the description, start time, and end time.
+     *
+     * @param arguments The raw string containing the description, "/from" start time, and "/to" end time.
+     * @return A formatted string confirming the task has been added.
+     * @throws KikiException If the description is empty or the "/from" or "/to" times are missing.
+     */
+    private String addEvent(String arguments) throws KikiException {
+        if (arguments.isEmpty()) {
+            throw new KikiException("An event needs a description! What is happening?");
+        }
+        String[] parts = arguments.split(" /from ");
+        if (parts.length < 2) {
+            throw new KikiException("When does it start? Please specify a start time using \"/from\".");
+        }
+        String description = parts[0];
+        String[] times = parts[1].split(" /to ");
+        if (times.length < 2) {
+            throw new KikiException("When does it end? Please specify an end time using \"/to\".");
+        }
+        Task newTask = new Event(description, times[0], times[1]);
+        return addTaskToStorage(newTask);
+    }
+
+    /**
+     * Helper method to add a task to the internal list and save to storage.
+     *
+     * @param newTask The task object to be added.
+     * @return A standard success message displaying the added task and current task count.
+     */
+    private String addTaskToStorage(Task newTask) {
         tasks.addTask(newTask);
         storage.save(tasks.getAllTasks());
-
         return "Got it. I've added this task:\n"
                 + "  " + newTask + "\n"
                 + "Now you have " + tasks.size() + " tasks in the list.";

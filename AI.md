@@ -13,3 +13,21 @@
 * N/A (The tool completed the task without errors).
 
 **Time saved:** ~1 hour
+
+---
+
+## Week 5
+
+**Task:** Updating Javadoc for `Kiki.java` after fixing the long method
+
+**Tool used:** Gemini
+
+**Goal:** To generate Javadoc for the newly extracted methods (e.g., `addTodo`, `addDeadline`) resulting from refactoring the long `getResponse` method in `Kiki.java`.
+
+**What worked:**
+* The AI correctly generated Javadoc comments for the new methods in `Kiki.java`.
+
+**What didn't work:**
+* N/A (The tool completed the task without errors).
+
+**Time saved:** ~30 minutes
