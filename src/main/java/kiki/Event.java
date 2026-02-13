@@ -1,6 +1,7 @@
 package kiki;
 
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 
 /**
  * Event class representing a task that starts at a specific time and ends at a specific time.
@@ -21,6 +22,10 @@ public class Event extends Task {
         super(description);
         this.from = DateHandler.parse(from);
         this.to = DateHandler.parse(to);
+    }
+
+    public ChronoLocalDate getDate() {
+        return this.from;
     }
 
     @Override

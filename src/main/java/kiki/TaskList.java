@@ -1,6 +1,8 @@
 package kiki;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * TaskList class representing the list of tasks.
@@ -88,5 +90,21 @@ public class TaskList {
      */
     public ArrayList<Task> getAllTasks() {
         return this.tasks;
+    }
+
+    /**
+     * Sorts tasks chronologically
+     *
+     * @return String of sorted tasks.
+     */
+    public String sortTasks() {
+        tasks.sort(Comparator.comparing(Task::getDate));
+
+        StringBuilder sb = new StringBuilder("I've sorted your tasks!\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            sb.append((i + 1)).append(".").append(tasks.get(i))
+                    .append(i < tasks.size() - 1 ? "\n" : "");
+        }
+        return sb.toString();
     }
 }

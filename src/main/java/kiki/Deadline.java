@@ -1,6 +1,7 @@
 package kiki;
 
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 
 /**
  * Deadline class representing a task that needs to be done before a specific time.
@@ -18,6 +19,11 @@ public class Deadline extends Task {
     public Deadline(String description, String by) throws KikiException {
         super(description);
         this.by = DateHandler.parse(by);
+    }
+
+    @Override
+    public ChronoLocalDate getDate() {
+        return this.by;
     }
 
     @Override

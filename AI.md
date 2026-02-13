@@ -13,3 +13,21 @@
 * N/A (The tool completed the task without errors).
 
 **Time saved:** ~1 hour
+
+---
+
+## Week 5
+
+**Task:** Updating Javadoc for newly added methods.
+
+**Tool used:** Gemini
+
+**Goal:** To generate Javadoc documentation for all newly created helper methods
+
+**What worked:**
+* The AI successfully generated accurate Javadocs for every new method I added this week.
+
+**What didn't work:**
+* N/A (The tool completed the task without errors).
+
+**Time saved:** ~1 hour

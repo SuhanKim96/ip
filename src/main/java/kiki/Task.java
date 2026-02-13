@@ -1,5 +1,8 @@
 package kiki;
 
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
+
 /**
  * Task class with a description and completion status.
  */
@@ -56,6 +59,15 @@ public class Task {
      */
     public String getDescription() {
         return this.description;
+    }
+
+    /**
+     * Returns task date for sorting. Defaults to max date (end of list).
+     *
+     * @return Task date or LocalDate.MAX.
+     */
+    public ChronoLocalDate getDate() {
+        return LocalDate.MAX;
     }
 
     @Override

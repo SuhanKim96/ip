@@ -51,6 +51,8 @@ public class Kiki {
             case DEADLINE:
             case EVENT:
                 return addTask(command, arguments);
+            case SORT:
+                return tasks.sortTasks();
             default:
                 throw new KikiException("I'm sorry, but I don't know what that means.");
             }
