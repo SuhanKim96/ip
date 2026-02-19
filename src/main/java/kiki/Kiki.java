@@ -51,8 +51,8 @@ public class Kiki {
                 return addTodo(arguments);
             case DEADLINE:
                 return addDeadline(arguments);
-                case EVENT:
-                return addTask(command, arguments);
+            case EVENT:
+                return addEvent(arguments);
             case SORT:
                 return tasks.sortTasks();
             default:
