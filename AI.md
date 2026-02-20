@@ -31,3 +31,21 @@
 * N/A (The tool completed the task without errors).
 
 **Time saved:** ~1 hour
+
+---
+
+## Week 6
+
+**Task:** Improve code quality
+
+**Tool used:** Gemini
+
+**Goal:** To improve code readability and maintainability in `Kiki.java` and `Storage.java` by removing magic literals, extracting duplicated logic, applying the SLAP, and adding Javadocs for the newly extracted helper methods.
+
+**What worked:**
+* The AI successfully identified specific areas for improvement refactored the code safely.
+
+**What didn't work:**
+* N/A (The tool completed the task without errors).
+
+**Time saved:** ~1 hour

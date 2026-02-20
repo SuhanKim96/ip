@@ -7,6 +7,10 @@ import java.util.ArrayList;
  * This class handles the interaction between the storage, task list, and the GUI.
  */
 public class Kiki {
+    private static final String DEADLINE_DELIMITER = " /by ";
+    private static final String EVENT_START_DELIMITER = " /from ";
+    private static final String EVENT_END_DELIMITER = " /to ";
+
     private Storage storage;
     private TaskList tasks;
 
@@ -108,7 +112,7 @@ public class Kiki {
         if (arguments.isEmpty()) {
             throw new KikiException("A deadline needs a description!");
         }
-        String[] parts = arguments.split(" /by ");
+        String[] parts = arguments.split(DEADLINE_DELIMITER);
         if (parts.length < 2) {
             throw new KikiException("When is this due? Please specify a time using \"/by\".");
         }
@@ -128,12 +132,12 @@ public class Kiki {
         if (arguments.isEmpty()) {
             throw new KikiException("An event needs a description! What is happening?");
         }
-        String[] parts = arguments.split(" /from ");
+        String[] parts = arguments.split(EVENT_START_DELIMITER);
         if (parts.length < 2) {
             throw new KikiException("When does it start? Please specify a start time using \"/from\".");
         }
         String description = parts[0];
-        String[] times = parts[1].split(" /to ");
+        String[] times = parts[1].split(EVENT_END_DELIMITER);
         if (times.length < 2) {
             throw new KikiException("When does it end? Please specify an end time using \"/to\".");
         }
@@ -174,6 +178,30 @@ public class Kiki {
     }
 
     /**
+     * Parses and validates the task index from the user's input argument.
+     *
+     * @param argument The string containing the 1-based task index provided by the user.
+     * @param action   The action being performed used for generating contextual error messages.
+     * @return The 0-based index of the task in the task list.
+     * @throws KikiException If the argument is empty, not a valid number, or if the index is out of bounds.
+     */
+    private int parseTaskIndex(String argument, String action) throws KikiException {
+        if (argument.isEmpty()) {
+            throw new KikiException("Which task? Please tell me the task number to " + action + ".");
+        }
+
+        try {
+            int index = Integer.parseInt(argument) - 1;
+            if (index < 0 || index >= tasks.size()) {
+                throw new KikiException("I couldn't find that task! Please check the list again.");
+            }
+            return index;
+        } catch (NumberFormatException e) {
+            throw new KikiException("Please enter a valid number.");
+        }
+    }
+
+    /**
      * Marks a specific task as done or not done and saves the changes.
      *
      * @param argument The string containing the index of the task.
@@ -182,16 +210,7 @@ public class Kiki {
      * @throws KikiException If the argument is empty or the task index is out of bounds.
      */
     private String markTask(String argument, boolean isDone) throws KikiException {
-        if (argument.isEmpty()) {
-            throw new KikiException("Which task? Please tell me the task number.");
-        }
-
-        int index = Integer.parseInt(argument) - 1;
-
-        if (index < 0 || index >= tasks.size()) {
-            throw new KikiException("I couldn't find that task! Please check the list again.");
-        }
-
+        int index = parseTaskIndex(argument, "mark");
         Task task = tasks.get(index);
 
         if (isDone) {
@@ -213,16 +232,7 @@ public class Kiki {
      * @throws KikiException If the argument is empty or the task index is out of bounds.
      */
     private String deleteTask(String argument) throws KikiException {
-        if (argument.isEmpty()) {
-            throw new KikiException("Which task? Please tell me the task number to delete.");
-        }
-
-        int index = Integer.parseInt(argument) - 1;
-
-        if (index < 0 || index >= tasks.size()) {
-            throw new KikiException("I couldn't find that task! Please check the list again.");
-        }
-
+        int index = parseTaskIndex(argument, "delete");
         Task removedTask = tasks.delete(index);
         storage.save(tasks.getAllTasks());
 

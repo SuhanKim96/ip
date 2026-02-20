@@ -12,6 +12,11 @@ import java.util.Scanner;
 public class Storage {
     private static final String FILE_PATH = "./data/kiki.txt";
 
+    private static final String FILE_DELIMITER = " \\| ";
+    private static final String TODO_SYMBOL = "T";
+    private static final String DEADLINE_SYMBOL = "D";
+    private static final String EVENT_SYMBOL = "E";
+
     /**
      * Saves the current list of tasks to the hard disk.
      *
@@ -51,35 +56,48 @@ public class Storage {
             Scanner s = new Scanner(f);
             while (s.hasNext()) {
                 String line = s.nextLine();
-                String[] parts = line.split(" \\| ");
-
-                String type = parts[0];
-                boolean isDone = parts[1].equals("1");
-                String description = parts[2];
-
-                Task task = null;
-                switch (type) {
-                case "T":
-                    task = new Todo(description);
-                    break;
-                case "D":
-                    task = new Deadline(description, parts[3]);
-                    break;
-                case "E":
-                    task = new Event(description, parts[3], parts[4]);
-                    break;
-                default:
-                    throw new KikiException("Unknown task type in file.");
-                }
-
-                if (isDone) {
-                    task.markAsDone();
-                }
+                Task task = parseLineToTask(line);
                 loadedTasks.add(task);
             }
         } catch (Exception e) {
             throw new KikiException("Error loading file data: " + e.getMessage());
         }
         return loadedTasks;
+    }
+
+    /**
+     * Parses a single line of text from the storage file and converts it into a Task object.
+     *
+     * @param line A single string line from the data file representing a saved task.
+     * @return The reconstructed Task object (Todo, Deadline, or Event).
+     * @throws KikiException If the task type symbol in the file is unknown or if the format is corrupted.
+     */
+    private Task parseLineToTask(String line) throws KikiException {
+        String[] parts = line.split(FILE_DELIMITER);
+
+        String type = parts[0];
+        boolean isDone = parts[1].equals("1");
+        String description = parts[2];
+
+        Task task;
+        switch (type) {
+        case TODO_SYMBOL:
+            task = new Todo(description);
+            break;
+        case DEADLINE_SYMBOL:
+            task = new Deadline(description, parts[3]);
+            break;
+        case EVENT_SYMBOL:
+            task = new Event(description, parts[3], parts[4]);
+            break;
+        default:
+            throw new KikiException("Unknown task type in file.");
+        }
+
+        if (isDone) {
+            task.markAsDone();
+        }
+
+        return task;
     }
 }
