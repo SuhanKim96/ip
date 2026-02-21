@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 /**
  * Represents a dialog box consisting of an ImageView to represent the speaker's face
@@ -27,8 +28,8 @@ public class DialogBox extends HBox {
 
     /**
      * Creates a new DialogBox with the specified text and image.
-     * This constructor loads the layout from the FXML file and sets the
-     * controller to this instance.
+     * This constructor loads the layout from the FXML file, sets the text and image,
+     * and applies a circular clip to the profile picture to improve the GUI.
      *
      * @param text The text to be displayed in the dialog bubble.
      * @param img  The image representing the speaker.
@@ -45,6 +46,9 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(img);
+
+        Circle clip = new Circle(30, 30, 30);
+        displayPicture.setClip(clip);
     }
 
     /**
@@ -60,27 +64,33 @@ public class DialogBox extends HBox {
 
     /**
      * Factory method to create a DialogBox for the user.
-     * The image is placed on the right side by default.
+     * The dialog bubble is styled with a distinct background color (light green)
+     * and rounded corners to visually differentiate the user's input from the bot's responses.
      *
      * @param text The user's input text.
      * @param img  The user's profile image.
-     * @return A DialogBox representing the user's message.
+     * @return A DialogBox representing the user's message, styled as a chat bubble.
      */
     public static DialogBox getUserDialog(String text, Image img) {
-        return new DialogBox(text, img);
+        DialogBox db = new DialogBox(text, img);
+        db.dialog.setStyle("-fx-background-color: #DCF8C6; -fx-padding: 15px; -fx-background-radius: 15px; -fx-text-fill: black;");
+        return db;
     }
 
     /**
      * Factory method to create a DialogBox for Kiki (the bot).
-     * The image is flipped to the left side to distinguish it from the user.
+     * The dialog box is flipped to place the profile picture on the left.
+     * The dialog bubble is styled with a distinct background color (light gray)
+     * and rounded corners to visually distinguish Kiki's replies.
      *
      * @param text The bot's response text.
      * @param img  The bot's profile image.
-     * @return A DialogBox representing the bot's message.
+     * @return A DialogBox representing the bot's message, styled as a chat bubble.
      */
-    public static DialogBox getDukeDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
+    public static DialogBox getKikiDialog(String text, Image img) {
+        DialogBox db = new DialogBox(text, img);
         db.flip();
+        db.dialog.setStyle("-fx-background-color: #D4E6F1; -fx-padding: 15px; -fx-background-radius: 15px; -fx-text-fill: black;");
         return db;
     }
 }

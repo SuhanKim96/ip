@@ -49,3 +49,23 @@
 * N/A (The tool completed the task without errors).
 
 **Time saved:** ~1 hour
+
+___
+
+## Week 6 (Continued)
+
+**Task:** Improving GUI
+
+**Tool used:** Gemini
+
+**Goal:** To polish the JavaFX interface by making the conversation asymmetrical and more readable, styling the messages as chat bubbles, cropping profile pictures into circles, and documenting these changes in the Javadocs.
+
+**What worked:**
+* Styled the user and bot messages into distinct chat bubbles.
+* Cropped the profile pictures into circles.
+* Updated Javadocs for the changed methods.
+
+**What didn't work:**
+* N/A (The tool completed the task without errors).
+
+**Time saved:** ~30 minutes

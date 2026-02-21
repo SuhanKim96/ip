@@ -49,7 +49,7 @@ public class MainWindow extends AnchorPane {
     public void setKiki(Kiki k) {
         kiki = k;
         dialogContainer.getChildren().add(
-                DialogBox.getDukeDialog(kiki.getWelcomeMessage(), kikiImage)
+                DialogBox.getKikiDialog(kiki.getWelcomeMessage(), kikiImage)
         );
     }
 
@@ -65,7 +65,7 @@ public class MainWindow extends AnchorPane {
         String response = kiki.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDukeDialog(response, kikiImage)
+                DialogBox.getKikiDialog(response, kikiImage)
         );
         userInput.clear();
 
