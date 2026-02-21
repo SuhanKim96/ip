@@ -69,3 +69,22 @@ ___
 * N/A (The tool completed the task without errors).
 
 **Time saved:** ~30 minutes
+
+___
+
+## Week 6 (Continued)
+
+**Task:** Drafting the User Guide.
+
+**Tool used:** Gemini
+
+**Goal:** To generate a user guide based on the provided SE-EDU template that accurately documents all of Kiki's features, commands, and expected outputs, along with the required GUI acknowledgements.
+
+**What worked:**
+* Formatted the `README.md` perfectly to match the template structure (Description -> Example -> Expected Output).
+* Included the proper anti-plagiarism acknowledgement for the GUI code.
+
+**What didn't work:**
+* N/A (The tool completed the task without errors).
+
+**Time saved:** ~30 minutes
